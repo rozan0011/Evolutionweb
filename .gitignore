@@ -1,0 +1,13 @@
+node_modules
+package-lock.json
+
+node_modules
+package-lock.json
+.env
+.vs/
+db.ts
+/.vs/WebEvolution/FileContentIndex/39fcbf75-3e8c-4b90-9078-3d0fea5174f2.vsidx
+/.vs/WebEvolution/FileContentIndex/39fcbf75-3e8c-4b90-9078-3d0fea5174f2.vsidx
+/.vs/WebEvolution/FileContentIndex/68437b08-a952-4575-a122-f1cdfda5b541.vsidx
+/.vs/WebEvolution/FileContentIndex/76c04e61-6606-4579-9b69-8fa4fd408bf9.vsidx
+/.vs/WebEvolution/FileContentIndex/d6bc066f-f6b0-4bc9-9125-ba0dd590b447.vsidx
