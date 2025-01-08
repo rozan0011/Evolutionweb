@@ -12,6 +12,7 @@ const port = 3987;
 
 const corsOptions = {
     origin: ["https://interiumevolution2024.vercel.app/", "http://localhost:5173", "http://localhost:3000"],
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     optionsSuccessStatus: 200,
 };
 

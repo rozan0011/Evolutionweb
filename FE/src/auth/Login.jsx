@@ -20,52 +20,56 @@ const Login = () => {
           return re.test(String(email).toLowerCase());
      };
 
-     const handleLogin = async () => {
-          if (email === "" || password === "") {
-              setError("Email dan Password harus diisi.");
-              return;
-          }
-      
-          if (!validateEmail(email)) {
-              setError("Format Email Tidak Valid!");
-              return;
-          }
-      
-          setIsLoading(true);
-          try {
-              const response = await fetch(
-                  `${import.meta.env.VITE_DB_API_URL}api/register/login`,
-                  {
-                      method: "POST",
-                      headers: {
-                          "Content-Type": "application/json",
-                      },
-                      body: JSON.stringify({ email, password }),
-                  }
-              );
-              console.log(response);
-              
-              // Check if the response is okay and if it contains JSON
-              if (!response.ok) {
-                  throw new Error("Login failed. Please check your credentials.");
-              }
-      
-              const data = await response.json();
-      
-              if (response.status === 200 || (email === "admin@admin.com" && password === "admin123")) {
-                  dispatch(login({ token: data.data ? data.data : email, password }));
-                  alert("Login berhasil!");
-                  navigate("/dashboard");
-              } else {
-                  setError(data.message || "Email atau Password salah.");
-              }
-          } catch (error) {
-              console.error("Login error:", error);
-              setError("Terjadi kesalahan saat login.");
-          } finally {
-              setIsLoading(false);
-          }
-      };
+    const handleLogin = async () => {
+        if (email === "" || password === "") {
+            setError("Email dan Password harus diisi.");
+            return;
+        }
+
+        if (!validateEmail(email)) {
+            setError("Format Email Tidak Valid!");
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            const response = await fetch(
+                `${import.meta.env.VITE_DB_API_URL}/api/register/login`, // Added the slash
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ email, password }),
+                }
+            );
+
+            console.log("Response:", response); // Log the response for debugging
+
+            // Check if the response is okay
+            if (!response.ok) {
+                const errorData = await response.json(); // Get the error response
+                console.error("Error response:", errorData); // Log the error response
+                throw new Error(errorData.message || "Login failed. Please check your credentials.");
+            }
+
+            const data = await response.json();
+
+            // Check for successful login
+            if (response.status === 200 || (email === "admin@admin.com" && password === "admin123")) {
+                dispatch(login({ token: data.data ? data.data : email, password }));
+                alert("Login berhasil!");
+                navigate("/dashboard");
+            } else {
+                setError(data.message || "Email atau Password salah.");
+            }
+        } catch (error) {
+            console.error("Login error:", error);
+            setError("Terjadi kesalahan saat login.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
       
      const closeModal = () => {
           setError("");
