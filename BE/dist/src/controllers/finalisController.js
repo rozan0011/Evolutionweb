@@ -1,7 +1,10 @@
-import { getAllFinalis } from "../models/finalisModel";
-export const getAllFinalisController = async (req, res) => {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getAllFinalisController = void 0;
+const finalisModel_1 = require("../models/finalisModel");
+const getAllFinalisController = async (req, res) => {
     try {
-        const finalis = await getAllFinalis();
+        const finalis = await (0, finalisModel_1.getAllFinalis)();
         res.json(finalis);
     }
     catch (error) {
@@ -9,3 +12,4 @@ export const getAllFinalisController = async (req, res) => {
         res.status(500).json({ message: "backend error broo bagian finalis" });
     }
 };
+exports.getAllFinalisController = getAllFinalisController;

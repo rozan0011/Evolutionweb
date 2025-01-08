@@ -1,7 +1,13 @@
-import { getAllTeams, addMemberTeam, getTeamByID, getTeamNameByID, } from "../models/teamModel";
-import jwt from "jsonwebtoken";
-import { changeStatusRegistrasi, checkStatusRegistrasiWithExpectedStatus, } from "../models/registerModel";
-export const addMemberTeamController = async (req, res) => {
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getAllTeamsController = exports.getTeamNameByIDController = exports.getTeamByIDController = exports.addMemberTeamController = void 0;
+const teamModel_1 = require("../models/teamModel");
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const registerModel_1 = require("../models/registerModel");
+const addMemberTeamController = async (req, res) => {
     try {
         const authHeader = req.headers.authorization;
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -10,12 +16,12 @@ export const addMemberTeamController = async (req, res) => {
             });
         }
         const token = authHeader.split(" ")[1];
-        const decoded = jwt.verify(token, process.env.SECRET_KEY);
+        const decoded = jsonwebtoken_1.default.verify(token, process.env.SECRET_KEY);
         if (!decoded || !decoded.RegistrationID) {
             return res.status(400).json({ message: "Token tidak valid" });
         }
         const RegistrationID = decoded.RegistrationID;
-        const cek_status = await checkStatusRegistrasiWithExpectedStatus(RegistrationID, 0);
+        const cek_status = await (0, registerModel_1.checkStatusRegistrasiWithExpectedStatus)(RegistrationID, 0);
         if (cek_status !== 0) {
             return res.status(400).json({ message: "bad request" });
         }
@@ -28,7 +34,7 @@ export const addMemberTeamController = async (req, res) => {
                 .status(400)
                 .json({ message: "All member details are required" });
         }
-        const updatedTeam = await addMemberTeam(RegistrationID, {
+        const updatedTeam = await (0, teamModel_1.addMemberTeam)(RegistrationID, {
             Nama_Anggota2,
             NIM_Anggota2,
             Nama_Anggota3,
@@ -39,7 +45,7 @@ export const addMemberTeamController = async (req, res) => {
                 message: "Team members updated successfully",
                 team: updatedTeam,
             });
-            await changeStatusRegistrasi(RegistrationID, 1);
+            await (0, registerModel_1.changeStatusRegistrasi)(RegistrationID, 1);
         }
         else {
             res.status(404).json({
@@ -54,7 +60,8 @@ export const addMemberTeamController = async (req, res) => {
         });
     }
 };
-export const getTeamByIDController = async (req, res) => {
+exports.addMemberTeamController = addMemberTeamController;
+const getTeamByIDController = async (req, res) => {
     try {
         const authHeader = req.headers.authorization;
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -63,12 +70,12 @@ export const getTeamByIDController = async (req, res) => {
             });
         }
         const token = authHeader.split(" ")[1];
-        const decoded = jwt.verify(token, process.env.SECRET_KEY);
+        const decoded = jsonwebtoken_1.default.verify(token, process.env.SECRET_KEY);
         if (!decoded || !decoded.RegistrationID) {
             return res.status(400).json({ message: "Token tidak valid" });
         }
         const RegistrationID = decoded.RegistrationID;
-        const team = await getTeamByID(RegistrationID);
+        const team = await (0, teamModel_1.getTeamByID)(RegistrationID);
         if (team) {
             res.json(team);
         }
@@ -83,7 +90,8 @@ export const getTeamByIDController = async (req, res) => {
         });
     }
 };
-export const getTeamNameByIDController = async (req, res) => {
+exports.getTeamByIDController = getTeamByIDController;
+const getTeamNameByIDController = async (req, res) => {
     try {
         const authHeader = req.headers.authorization;
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -92,12 +100,12 @@ export const getTeamNameByIDController = async (req, res) => {
             });
         }
         const token = authHeader.split(" ")[1];
-        const decoded = jwt.verify(token, process.env.SECRET_KEY);
+        const decoded = jsonwebtoken_1.default.verify(token, process.env.SECRET_KEY);
         if (!decoded || !decoded.RegistrationID) {
             return res.status(400).json({ message: "Token tidak valid" });
         }
         const RegistrationID = decoded.RegistrationID;
-        const team = await getTeamNameByID(RegistrationID);
+        const team = await (0, teamModel_1.getTeamNameByID)(RegistrationID);
         if (team) {
             res.json(team);
         }
@@ -112,9 +120,10 @@ export const getTeamNameByIDController = async (req, res) => {
         });
     }
 };
-export const getAllTeamsController = async (req, res) => {
+exports.getTeamNameByIDController = getTeamNameByIDController;
+const getAllTeamsController = async (req, res) => {
     try {
-        const teams = await getAllTeams();
+        const teams = await (0, teamModel_1.getAllTeams)();
         res.json(teams);
     }
     catch (error) {
@@ -124,3 +133,4 @@ export const getAllTeamsController = async (req, res) => {
         });
     }
 };
+exports.getAllTeamsController = getAllTeamsController;

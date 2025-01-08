@@ -1,12 +1,17 @@
-import { Router } from "express";
-import { getAllAdministrativeController, uploadAdministrativeController, checkAdministrativeController, } from "../controllers/administrativeController";
-import upload from "../config/multer";
-const router = Router();
-router.post("/upload/document", upload.fields([
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const administrativeController_1 = require("../controllers/administrativeController");
+const multer_1 = __importDefault(require("../config/multer"));
+const router = (0, express_1.Router)();
+router.post("/upload/document", multer_1.default.fields([
     { name: "Kartu_Tanda_Mahasiswa", maxCount: 1 },
     { name: "Bukti_post_Twibon", maxCount: 1 },
     { name: "Bukti_Pembayaran", maxCount: 1 },
-]), uploadAdministrativeController); // http://localhost:3987/api/administrative/upload/document
-router.get("/", getAllAdministrativeController);
-router.get("/cek-administrasi", checkAdministrativeController); // http://localhost:3987/api/administrative/cek-administrasi
-export default router;
+]), administrativeController_1.uploadAdministrativeController); // http://localhost:3987/api/administrative/upload/document
+router.get("/", administrativeController_1.getAllAdministrativeController);
+router.get("/cek-administrasi", administrativeController_1.checkAdministrativeController); // http://localhost:3987/api/administrative/cek-administrasi
+exports.default = router;

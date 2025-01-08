@@ -1,9 +1,15 @@
-import { getAllRegisters, getSingleRegister, createRegister, updateRegister, deleteRegister, login, logout, checkEmail, checkNamaTeam, checkNomorTelfon, checkNIM, } from "../models/registerModel";
-import jwt from "jsonwebtoken";
-import { generateID } from "../utils/generateID";
-import { sendMessage } from "./emailController";
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.deleteRegisterController = exports.updateRegisterController = exports.getAllRegisterController = exports.getSingleRegisterController = exports.createRegisterController = exports.logoutRegisterController = exports.loginRegisterController = void 0;
+const registerModel_1 = require("../models/registerModel");
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const generateID_1 = require("../utils/generateID");
+const emailController_1 = require("./emailController");
 //login controller
-export const loginRegisterController = async (req, res) => {
+const loginRegisterController = async (req, res) => {
     try {
         const { email, password } = req.body;
         if (!email || !password) {
@@ -11,7 +17,7 @@ export const loginRegisterController = async (req, res) => {
                 .status(400)
                 .json({ message: "Email and password are required" });
         }
-        const data = await login(email, password);
+        const data = await (0, registerModel_1.login)(email, password);
         if (data) {
             res.status(200).json({
                 message: "Login successful",
@@ -31,8 +37,9 @@ export const loginRegisterController = async (req, res) => {
         });
     }
 };
+exports.loginRegisterController = loginRegisterController;
 // Logout controller
-export const logoutRegisterController = async (req, res) => {
+const logoutRegisterController = async (req, res) => {
     try {
         const authHeader = req.headers.authorization;
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -41,13 +48,13 @@ export const logoutRegisterController = async (req, res) => {
             });
         }
         const token = authHeader.split(" ")[1];
-        const decoded = jwt.verify(token, process.env.SECRET_KEY);
+        const decoded = jsonwebtoken_1.default.verify(token, process.env.SECRET_KEY);
         if (!decoded || !decoded.RegistrationID) {
             return res.status(400).json({ message: "Token tidak valid" });
         }
         const RegistrationID = decoded.RegistrationID;
         // Logout (set token di database menjadi null)
-        await logout(RegistrationID);
+        await (0, registerModel_1.logout)(RegistrationID);
         res.status(200).json({ message: "Logout berhasil" });
     }
     catch (error) {
@@ -58,10 +65,11 @@ export const logoutRegisterController = async (req, res) => {
         });
     }
 };
-export const createRegisterController = async (req, res) => {
+exports.logoutRegisterController = logoutRegisterController;
+const createRegisterController = async (req, res) => {
     try {
         const { Nama, Nomor_Telfon, Nama_Instansi, Nama_Team, Nomor_Induk_Mahasiswa, Email, Provinsi, Kabupaten, Password, Pilihan_Lomba, } = req.body;
-        const RegistrationID = generateID();
+        const RegistrationID = (0, generateID_1.generateID)();
         const newRegister = {
             RegistrationID,
             Nama,
@@ -75,35 +83,35 @@ export const createRegisterController = async (req, res) => {
             Password,
             Pilihan_Lomba,
         };
-        const emailCheckResult = (await checkEmail(Email)) ?? 200;
+        const emailCheckResult = (await (0, registerModel_1.checkEmail)(Email)) ?? 200;
         if (emailCheckResult === 401) {
             return res.status(401).json({
                 code: 401,
                 message: "Email already registered",
             });
         }
-        const checkNamaTeamResult = (await checkNamaTeam(Nama_Team)) ?? 200;
+        const checkNamaTeamResult = (await (0, registerModel_1.checkNamaTeam)(Nama_Team)) ?? 200;
         if (checkNamaTeamResult === 401) {
             return res.status(401).json({
                 code: 401,
                 message: "Team name already registered",
             });
         }
-        const checkNomorTelfonResult = (await checkNomorTelfon(Nomor_Telfon)) ?? 200;
+        const checkNomorTelfonResult = (await (0, registerModel_1.checkNomorTelfon)(Nomor_Telfon)) ?? 200;
         if (checkNomorTelfonResult === 401) {
             return res.status(401).json({
                 code: 401,
                 message: "Phone number already registered",
             });
         }
-        const checkNomorIndukMahasiswa = (await checkNIM(Nomor_Induk_Mahasiswa)) ?? 200;
+        const checkNomorIndukMahasiswa = (await (0, registerModel_1.checkNIM)(Nomor_Induk_Mahasiswa)) ?? 200;
         if (checkNomorIndukMahasiswa === 401) {
             return res.status(401).json({
                 code: 401,
                 message: "NIM already registered",
             });
         }
-        const result = await createRegister(newRegister);
+        const result = await (0, registerModel_1.createRegister)(newRegister);
         if (result === 201) {
             const subject = "Selamat! Anda Telah Teregisterasi Tahap 1";
             const htmlContent = `
@@ -119,7 +127,7 @@ export const createRegisterController = async (req, res) => {
       `;
             // Try to send the email and handle any errors
             try {
-                await sendMessage.sendEmail(Email, subject, "", htmlContent);
+                await emailController_1.sendMessage.sendEmail(Email, subject, "", htmlContent);
                 res.status(201).json({
                     code: 201,
                     message: "Register created successfully",
@@ -147,7 +155,8 @@ export const createRegisterController = async (req, res) => {
         });
     }
 };
-export const getSingleRegisterController = async (req, res) => {
+exports.createRegisterController = createRegisterController;
+const getSingleRegisterController = async (req, res) => {
     try {
         const authHeader = req.headers.authorization;
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -156,12 +165,12 @@ export const getSingleRegisterController = async (req, res) => {
             });
         }
         const token = authHeader.split(" ")[1];
-        const decoded = jwt.verify(token, process.env.SECRET_KEY);
+        const decoded = jsonwebtoken_1.default.verify(token, process.env.SECRET_KEY);
         if (!decoded || !decoded.RegistrationID) {
             return res.status(400).json({ message: "Token tidak valid" });
         }
         const RegistrationID = decoded.RegistrationID;
-        const singleRegister = await getSingleRegister(Number(RegistrationID));
+        const singleRegister = await (0, registerModel_1.getSingleRegister)(Number(RegistrationID));
         if (singleRegister) {
             res.json(singleRegister);
         }
@@ -176,9 +185,10 @@ export const getSingleRegisterController = async (req, res) => {
         });
     }
 };
-export const getAllRegisterController = async (req, res) => {
+exports.getSingleRegisterController = getSingleRegisterController;
+const getAllRegisterController = async (req, res) => {
     try {
-        const dataRegister = await getAllRegisters();
+        const dataRegister = await (0, registerModel_1.getAllRegisters)();
         res.json(dataRegister);
     }
     catch (error) {
@@ -188,11 +198,12 @@ export const getAllRegisterController = async (req, res) => {
         });
     }
 };
-export const updateRegisterController = async (req, res) => {
+exports.getAllRegisterController = getAllRegisterController;
+const updateRegisterController = async (req, res) => {
     try {
         const { id } = req.params;
         const updatedRegister = req.body;
-        await updateRegister(Number(id), updatedRegister);
+        await (0, registerModel_1.updateRegister)(Number(id), updatedRegister);
         res.json({ message: "Register updated successfully" });
     }
     catch (error) {
@@ -202,10 +213,11 @@ export const updateRegisterController = async (req, res) => {
         });
     }
 };
-export const deleteRegisterController = async (req, res) => {
+exports.updateRegisterController = updateRegisterController;
+const deleteRegisterController = async (req, res) => {
     try {
         const { id } = req.params;
-        await deleteRegister(Number(id));
+        await (0, registerModel_1.deleteRegister)(Number(id));
         res.json({ message: "Register deleted successfully" });
     }
     catch (error) {
@@ -215,3 +227,4 @@ export const deleteRegisterController = async (req, res) => {
         });
     }
 };
+exports.deleteRegisterController = deleteRegisterController;

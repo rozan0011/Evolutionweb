@@ -1,11 +1,17 @@
-import { DBconnection } from "../config/db";
-import jsonwebtoken from "jsonwebtoken";
-import { generateID } from "../utils/generateID";
-import env from "dotenv";
-env.config();
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.deleteRegister = exports.updateRegister = exports.getSingleRegister = exports.getAllRegisters = exports.checkStatusRegistrasi = exports.logout = exports.login = exports.createRegister = exports.changeStatusRegistrasi = exports.checkStatusRegistrasiWithExpectedStatus = exports.checkNama = exports.checkNomorTelfon = exports.checkNIM = exports.checkNamaTeam = exports.checkEmail = void 0;
+const db_1 = require("../config/db");
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const generateID_1 = require("../utils/generateID");
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 // fungsi buat mengecek apakah email sudah terdaftar atau belum mengembalikan number
-export const checkEmail = async (Email) => {
-    const [dataRegister] = await DBconnection.query("SELECT * FROM Register WHERE Email = ?", [Email]);
+const checkEmail = async (Email) => {
+    const [dataRegister] = await db_1.DBconnection.query("SELECT * FROM Register WHERE Email = ?", [Email]);
     if (dataRegister.length > 0) {
         return 401;
     }
@@ -13,9 +19,10 @@ export const checkEmail = async (Email) => {
         return 200;
     }
 };
+exports.checkEmail = checkEmail;
 // fungsi buat cek apakah Nama_Team sudah terdaftar atau belum
-export const checkNamaTeam = async (Nama_Team) => {
-    const [dataRegister] = await DBconnection.query("SELECT * FROM Register WHERE Nama_Team = ?", [Nama_Team]);
+const checkNamaTeam = async (Nama_Team) => {
+    const [dataRegister] = await db_1.DBconnection.query("SELECT * FROM Register WHERE Nama_Team = ?", [Nama_Team]);
     if (dataRegister.length > 0) {
         return 401;
     }
@@ -23,9 +30,10 @@ export const checkNamaTeam = async (Nama_Team) => {
         return 200;
     }
 };
+exports.checkNamaTeam = checkNamaTeam;
 // fungsi buat cek nomor induk mahasiswa sudah terdaftar atau belum
-export const checkNIM = async (Nomor_Induk_Mahasiswa) => {
-    const [dataRegister] = await DBconnection.query("SELECT * FROM Register WHERE Nomor_Induk_Mahasiswa = ?", [Nomor_Induk_Mahasiswa]);
+const checkNIM = async (Nomor_Induk_Mahasiswa) => {
+    const [dataRegister] = await db_1.DBconnection.query("SELECT * FROM Register WHERE Nomor_Induk_Mahasiswa = ?", [Nomor_Induk_Mahasiswa]);
     if (dataRegister.length > 0) {
         return 401;
     }
@@ -33,9 +41,10 @@ export const checkNIM = async (Nomor_Induk_Mahasiswa) => {
         return 200;
     }
 };
+exports.checkNIM = checkNIM;
 // fungsi buat cek nomor telfon sudah terdaftar atau belum
-export const checkNomorTelfon = async (Nomor_Telfon) => {
-    const [dataRegister] = await DBconnection.query("SELECT * FROM Register WHERE Nomor_Telfon = ?", [Nomor_Telfon]);
+const checkNomorTelfon = async (Nomor_Telfon) => {
+    const [dataRegister] = await db_1.DBconnection.query("SELECT * FROM Register WHERE Nomor_Telfon = ?", [Nomor_Telfon]);
     if (dataRegister.length > 0) {
         return 401;
     }
@@ -43,9 +52,10 @@ export const checkNomorTelfon = async (Nomor_Telfon) => {
         return 200;
     }
 };
+exports.checkNomorTelfon = checkNomorTelfon;
 // fungsi buat cek nama sudah terdaftar atau belum
-export const checkNama = async (Nama) => {
-    const [dataRegister] = await DBconnection.query("SELECT * FROM Register WHERE Nama = ?", [Nama]);
+const checkNama = async (Nama) => {
+    const [dataRegister] = await db_1.DBconnection.query("SELECT * FROM Register WHERE Nama = ?", [Nama]);
     if (dataRegister.length > 0) {
         return 401;
     }
@@ -53,9 +63,10 @@ export const checkNama = async (Nama) => {
         return 200;
     }
 };
+exports.checkNama = checkNama;
 // fungsi untuk cek Status_Registrasi
-export const checkStatusRegistrasiWithExpectedStatus = async (RegistrationID, expect_status) => {
-    const [dataRegister] = await DBconnection.query("SELECT Status_Registrasi FROM Register WHERE RegistrationID = ?", [RegistrationID]);
+const checkStatusRegistrasiWithExpectedStatus = async (RegistrationID, expect_status) => {
+    const [dataRegister] = await db_1.DBconnection.query("SELECT Status_Registrasi FROM Register WHERE RegistrationID = ?", [RegistrationID]);
     if (dataRegister.length > 0) {
         if (dataRegister[0].Status_Registrasi === expect_status) {
             return expect_status;
@@ -68,14 +79,16 @@ export const checkStatusRegistrasiWithExpectedStatus = async (RegistrationID, ex
         return 500;
     }
 };
+exports.checkStatusRegistrasiWithExpectedStatus = checkStatusRegistrasiWithExpectedStatus;
 // fungsi untuk merubah status
-export const changeStatusRegistrasi = async (RegistrationID, newStatus) => {
-    await DBconnection.query("UPDATE Register SET Status_Registrasi = ? WHERE RegistrationID = ?", [newStatus, RegistrationID]);
+const changeStatusRegistrasi = async (RegistrationID, newStatus) => {
+    await db_1.DBconnection.query("UPDATE Register SET Status_Registrasi = ? WHERE RegistrationID = ?", [newStatus, RegistrationID]);
 };
+exports.changeStatusRegistrasi = changeStatusRegistrasi;
 // fungsi untuk input data registrasi
-export const createRegister = async (newRegister) => {
+const createRegister = async (newRegister) => {
     const { RegistrationID, Nama, Nomor_Telfon, Nama_Instansi, Nama_Team, Nomor_Induk_Mahasiswa, Email, Provinsi, Kabupaten, Password, Pilihan_Lomba, } = newRegister;
-    await DBconnection.query(`INSERT INTO Register 
+    await db_1.DBconnection.query(`INSERT INTO Register 
             (RegistrationID,Nama, Nomor_Telfon, Nama_Instansi, Nama_Team, Nomor_Induk_Mahasiswa, Email, Provinsi, Kabupaten, Password, Pilihan_Lomba, Status_Registrasi, token) 
             VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [
         RegistrationID,
@@ -93,8 +106,8 @@ export const createRegister = async (newRegister) => {
         "",
     ]);
     // ngebuat table Team dengan RegistrationID yang sama dengan RegistrationID yang baru diinsert
-    await DBconnection.query(`INSERT INTO Team (TeamID,RegistrationID,Nama_Anggota1,NIM_Anggota1) VALUES (?,?,?,?)`, [
-        generateID(),
+    await db_1.DBconnection.query(`INSERT INTO Team (TeamID,RegistrationID,Nama_Anggota1,NIM_Anggota1) VALUES (?,?,?,?)`, [
+        (0, generateID_1.generateID)(),
         newRegister.RegistrationID,
         Nama,
         Nomor_Induk_Mahasiswa,
@@ -118,8 +131,8 @@ export const createRegister = async (newRegister) => {
             Competitions = "";
     }
     if (Competitions) {
-        await DBconnection.query("INSERT INTO Competitions (CompetitionsID, RegistrationID, Pernyataan_Origalitas, Proposal, Dokumen_Substansi, title) VALUES (?, ?, ?,?, ?, ?)", [
-            generateID(),
+        await db_1.DBconnection.query("INSERT INTO Competitions (CompetitionsID, RegistrationID, Pernyataan_Origalitas, Proposal, Dokumen_Substansi, title) VALUES (?, ?, ?,?, ?, ?)", [
+            (0, generateID_1.generateID)(),
             newRegister.RegistrationID,
             "",
             "",
@@ -128,19 +141,20 @@ export const createRegister = async (newRegister) => {
         ]);
     }
     // ngbuat table Administrative dengan RegistrationID yang sama dengan RegistrationID yang baru diinsert
-    await DBconnection.query(`INSERT INTO Administrative 
+    await db_1.DBconnection.query(`INSERT INTO Administrative 
             (AdministrativeID ,RegistrationID, Kartu_Tanda_Mahasiswa, Bukti_post_Twibon, Bukti_Pembayaran)
-            VALUES (?, ?, ?, ?, ?)`, [generateID(), newRegister.RegistrationID, "", "", ""]);
+            VALUES (?, ?, ?, ?, ?)`, [(0, generateID_1.generateID)(), newRegister.RegistrationID, "", "", ""]);
     return 201;
 };
+exports.createRegister = createRegister;
 // login
-export const login = async (Email, Password) => {
+const login = async (Email, Password) => {
     try {
-        const [dataRegister] = await DBconnection.query("SELECT * FROM Register WHERE Email = ? AND Password = ?", [Email, Password]);
+        const [dataRegister] = await db_1.DBconnection.query("SELECT * FROM Register WHERE Email = ? AND Password = ?", [Email, Password]);
         if (dataRegister.length > 0) {
-            const token = jsonwebtoken.sign({ RegistrationID: dataRegister[0].RegistrationID }, process.env.SECRET_KEY, { expiresIn: "3h" }); // Token sampe 3 jam
+            const token = jsonwebtoken_1.default.sign({ RegistrationID: dataRegister[0].RegistrationID }, process.env.SECRET_KEY, { expiresIn: "3h" }); // Token sampe 3 jam
             // ngisi token di table Register
-            await DBconnection.query("UPDATE Register SET token = ? WHERE RegistrationID = ?", [token, dataRegister[0].RegistrationID]);
+            await db_1.DBconnection.query("UPDATE Register SET token = ? WHERE RegistrationID = ?", [token, dataRegister[0].RegistrationID]);
             // Tambahkan token ke objek yang akan dikembalikan
             dataRegister[0].token = token;
             return dataRegister[0];
@@ -154,13 +168,15 @@ export const login = async (Email, Password) => {
         throw new Error("Error during login process");
     }
 };
+exports.login = login;
 // logout
-export const logout = async (RegistrationID) => {
-    await DBconnection.query("UPDATE Register SET token = ? WHERE RegistrationID = ?", [null, RegistrationID]);
+const logout = async (RegistrationID) => {
+    await db_1.DBconnection.query("UPDATE Register SET token = ? WHERE RegistrationID = ?", [null, RegistrationID]);
 };
+exports.logout = logout;
 // fungsi untuk cek status registrasi yang mertun string status_registrasi ("sudah" atau "belum")
-export const checkStatusRegistrasi = async (RegistrationID) => {
-    const [dataRegister] = await DBconnection.query("SELECT Status_Registrasi FROM Register WHERE RegistrationID = ?", [RegistrationID]);
+const checkStatusRegistrasi = async (RegistrationID) => {
+    const [dataRegister] = await db_1.DBconnection.query("SELECT Status_Registrasi FROM Register WHERE RegistrationID = ?", [RegistrationID]);
     if (dataRegister.length > 0) {
         if (dataRegister[0].Status_Registrasi === 1) {
             return "sudah";
@@ -173,13 +189,15 @@ export const checkStatusRegistrasi = async (RegistrationID) => {
         return "data tidak ditemukan";
     }
 };
+exports.checkStatusRegistrasi = checkStatusRegistrasi;
 // admin
-export const getAllRegisters = async () => {
-    const [dataRegister] = await DBconnection.query("SELECT * FROM Register");
+const getAllRegisters = async () => {
+    const [dataRegister] = await db_1.DBconnection.query("SELECT * FROM Register");
     return dataRegister;
 };
-export const getSingleRegister = async (RegistrationID) => {
-    const [dataRegister] = await DBconnection.query("SELECT * FROM Register WHERE RegistrationID = ?", [RegistrationID]);
+exports.getAllRegisters = getAllRegisters;
+const getSingleRegister = async (RegistrationID) => {
+    const [dataRegister] = await db_1.DBconnection.query("SELECT * FROM Register WHERE RegistrationID = ?", [RegistrationID]);
     if (dataRegister.length > 0) {
         return dataRegister[0];
     }
@@ -187,9 +205,10 @@ export const getSingleRegister = async (RegistrationID) => {
         return null;
     }
 };
-export const updateRegister = async (RegistrationID, updatedRegister) => {
+exports.getSingleRegister = getSingleRegister;
+const updateRegister = async (RegistrationID, updatedRegister) => {
     const { Nama, Nomor_Telfon, Nama_Instansi, Nama_Team, Nomor_Induk_Mahasiswa, Email, Provinsi, Kabupaten, Password, Pilihan_Lomba, Status_Registrasi, } = updatedRegister;
-    await DBconnection.query(`UPDATE Register SET 
+    await db_1.DBconnection.query(`UPDATE Register SET 
     Nama = COALESCE(?, Nama),
     Nomor_Telfon = COALESCE(?, Nomor_Telfon),
     Nama_Instansi = COALESCE(?, Nama_Instansi),
@@ -216,8 +235,10 @@ export const updateRegister = async (RegistrationID, updatedRegister) => {
         RegistrationID,
     ]);
 };
-export const deleteRegister = async (RegistrationID) => {
-    await DBconnection.query("DELETE FROM Register WHERE RegistrationID = ?", [
+exports.updateRegister = updateRegister;
+const deleteRegister = async (RegistrationID) => {
+    await db_1.DBconnection.query("DELETE FROM Register WHERE RegistrationID = ?", [
         RegistrationID,
     ]);
 };
+exports.deleteRegister = deleteRegister;

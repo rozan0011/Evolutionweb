@@ -1,7 +1,10 @@
-import { DBconnection } from "../config/db";
-export const inputDataCompetitions = async (RegistrationID, newDataCompetitions) => {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createCompetitions = exports.uploadDocument = exports.getAllCompetitions = exports.checkCompetitionsByRegistrationID = exports.inputDataCompetitions = void 0;
+const db_1 = require("../config/db");
+const inputDataCompetitions = async (RegistrationID, newDataCompetitions) => {
     const { Pernyataan_Origalitas, Proposal, Dokumen_Substansi, title } = newDataCompetitions;
-    const connection = await DBconnection.getConnection();
+    const connection = await db_1.DBconnection.getConnection();
     try {
         await connection.beginTransaction();
         if (Pernyataan_Origalitas !== "") {
@@ -32,9 +35,10 @@ export const inputDataCompetitions = async (RegistrationID, newDataCompetitions)
         connection.release();
     }
 };
-export const checkCompetitionsByRegistrationID = async (RegistrationID) => {
+exports.inputDataCompetitions = inputDataCompetitions;
+const checkCompetitionsByRegistrationID = async (RegistrationID) => {
     try {
-        const [dataCompetitions] = await DBconnection.query(`SELECT Pernyataan_Origalitas, Proposal, Dokumen_Substansi FROM Competitions WHERE RegistrationID = ?`, [RegistrationID]);
+        const [dataCompetitions] = await db_1.DBconnection.query(`SELECT Pernyataan_Origalitas, Proposal, Dokumen_Substansi FROM Competitions WHERE RegistrationID = ?`, [RegistrationID]);
         if (dataCompetitions.length === 0) {
             console.error(`Data untuk RegistrationID ${RegistrationID} tidak ditemukan`);
             return 0;
@@ -56,17 +60,19 @@ export const checkCompetitionsByRegistrationID = async (RegistrationID) => {
         return 0;
     }
 };
-export const getAllCompetitions = async () => {
-    const [rows] = await DBconnection.query("SELECT * FROM Competitions");
+exports.checkCompetitionsByRegistrationID = checkCompetitionsByRegistrationID;
+const getAllCompetitions = async () => {
+    const [rows] = await db_1.DBconnection.query("SELECT * FROM Competitions");
     return rows;
 };
-export const uploadDocument = async (registrationID, proposal, dokumenSubstansi, pernyataanOriginalitas) => {
+exports.getAllCompetitions = getAllCompetitions;
+const uploadDocument = async (registrationID, proposal, dokumenSubstansi, pernyataanOriginalitas) => {
     try {
-        const [DataRegister] = await DBconnection.query("SELECT * FROM Register WHERE RegistrationID = ? AND Status_Registrasi = 1", [registrationID]);
+        const [DataRegister] = await db_1.DBconnection.query("SELECT * FROM Register WHERE RegistrationID = ? AND Status_Registrasi = 1", [registrationID]);
         if (DataRegister.length === 0) {
             return 404;
         }
-        await DBconnection.query(`UPDATE Competitions 
+        await db_1.DBconnection.query(`UPDATE Competitions 
        SET Proposal = ?, Dokumen_Substansi = ?, Pernyataan_Origalitas = ? 
        WHERE RegistrationID = ?`, [
             proposal,
@@ -81,9 +87,10 @@ export const uploadDocument = async (registrationID, proposal, dokumenSubstansi,
         return 500;
     }
 };
-export const createCompetitions = async (RegistrationID, title) => {
+exports.uploadDocument = uploadDocument;
+const createCompetitions = async (RegistrationID, title) => {
     try {
-        const [result] = await DBconnection.query(`INSERT INTO Competitions 
+        const [result] = await db_1.DBconnection.query(`INSERT INTO Competitions 
       (RegistrationID, Pernyataan_Origalitas, Proposal, Dokumen_Substansi, title)
       VALUES (?, '', '', '', ?)`, [RegistrationID, title]);
         if (result.affectedRows > 0) {
@@ -98,3 +105,4 @@ export const createCompetitions = async (RegistrationID, title) => {
         return 0;
     }
 };
+exports.createCompetitions = createCompetitions;
