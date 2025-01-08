@@ -34,7 +34,7 @@ const Login = () => {
         setIsLoading(true);
         try {
             const response = await fetch(
-                `${import.meta.env.VITE_DB_API_URL}/api/register/login`, // Added the slash
+                `${import.meta.env.VITE_DB_API_URL}api/register/login`,
                 {
                     method: "POST",
                     headers: {
