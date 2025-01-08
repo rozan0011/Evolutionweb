@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import dotenv from 'dotenv';
 import { DBconnection } from "./config/db";
 import registerRoutes from "./routes/registerRoutes";
@@ -11,29 +11,27 @@ import finalisRoutes from "./routes/finalisRoutes";
 dotenv.config(); // Load environment variables
 
 const app = express();
-const port = 3987; // Define the port
+const port = 3987;
 
-// CORS options
 const corsOptions = {
-    origin: ["https://evolutiontelkomuniversity.com", "http://localhost:5173", "http://localhost:3000/"],
+    origin: ["https://evolutiontelkomuniversity.com", "http://localhost:5173", "https://interiumevolution2024.vercel.app"],
     optionsSuccessStatus: 200,
 };
 
-// Middleware
 app.use(cors(corsOptions));
+
 app.use(express.json());
 
-// Routes
 app.use("/api/register", registerRoutes);
 app.use("/api/team", teamRoutes);
 app.use("/api/competitions", competitionsRoutes);
 app.use("/api/administrative", administrativeRoutes);
 app.use("/api/finalis", finalisRoutes);
 
-// Root endpoint
-app.get("/", (req: Request, res: Response) => {
+app.get("/", (req, res) => {
     res.send("API evolution telkom university .......");
 });
+
 
 // Database connection check
 let isDbConnected = false;

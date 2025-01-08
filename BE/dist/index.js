@@ -23,22 +23,18 @@ const administrativeRoutes_1 = __importDefault(require("./routes/administrativeR
 const finalisRoutes_1 = __importDefault(require("./routes/finalisRoutes"));
 dotenv_1.default.config(); // Load environment variables
 const app = (0, express_1.default)();
-const port = 3987; // Define the port
-// CORS options
+const port = 3987;
 const corsOptions = {
-    origin: ["https://evolutiontelkomuniversity.com", "http://localhost:5173", "http://localhost:3000/"],
+    origin: ["https://evolutiontelkomuniversity.com", "http://localhost:5173", "https://interiumevolution2024.vercel.app"],
     optionsSuccessStatus: 200,
 };
-// Middleware
 app.use((0, cors_1.default)(corsOptions));
 app.use(express_1.default.json());
-// Routes
 app.use("/api/register", registerRoutes_1.default);
 app.use("/api/team", teamRoutes_1.default);
 app.use("/api/competitions", competitionsRoutes_1.default);
 app.use("/api/administrative", administrativeRoutes_1.default);
 app.use("/api/finalis", finalisRoutes_1.default);
-// Root endpoint
 app.get("/", (req, res) => {
     res.send("API evolution telkom university .......");
 });
