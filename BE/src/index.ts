@@ -21,9 +21,17 @@ const corsOptions = {
 
 console.log("CORS options set for frontend connection");
 
+// Logging middleware
+app.use((req: Request, res: Response, next: NextFunction) => {
+    console.log(`Received request for ${req.url}`);
+    next();
+});
+
+// CORS and JSON middleware
 app.use(cors(corsOptions));
 app.use(express.json());
 
+// Define your routes
 app.use("/api/register", registerRoutes);
 app.use("/api/team", teamRoutes);
 app.use("/api/competitions", competitionsRoutes);
@@ -64,12 +72,6 @@ const startServer = async () => {
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     console.error(err.stack);
     res.status(500).send('Something broke!');
-});
-
-// Logging middleware
-app.use((req: Request, res: Response, next: NextFunction) => {
-    console.log(`Received request for ${req.url}`);
-    next();
 });
 
 startServer(); // Call the function to start the server
