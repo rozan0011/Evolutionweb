@@ -40,13 +40,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAllAdministrativeController = exports.checkAdministrativeController = exports.uploadAdministrativeController = void 0;
-var administrativeModel_1 = require("../models/administrativeModel");
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var fileUpload_1 = require("../config/fileUpload");
+var administrativeModel_1 = require("../models/administrativeModel");
 var registerModel_1 = require("../models/registerModel");
-var administrativeModel_2 = require("../models/administrativeModel");
 var uploadAdministrativeController = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var authHeader, token, decoded, RegistrationID, cek_status, files, kartuTandaMahasiswaUrl, buktiPostTwibonUrl, buktiPembayaranUrl, newDataAdministrative, error_1;
+    var authHeader, token, decoded, RegistrationID, statusCheck, files, kartuTandaMahasiswaUrl, buktiPostTwibonUrl, buktiPembayaranUrl, newDataAdministrative, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -65,14 +64,12 @@ var uploadAdministrativeController = function (req, res) { return __awaiter(void
                 RegistrationID = decoded.RegistrationID;
                 return [4 /*yield*/, (0, registerModel_1.checkStatusRegistrasiWithExpectedStatus)(RegistrationID, 1)];
             case 1:
-                cek_status = _a.sent();
-                if (cek_status !== 1) {
-                    return [2 /*return*/, res.status(400).json({ message: "bad request" })];
+                statusCheck = _a.sent();
+                if (statusCheck !== 1) {
+                    return [2 /*return*/, res.status(400).json({ message: "Status registrasi tidak valid" })];
                 }
                 files = req.files;
-                if (!files.Kartu_Tanda_Mahasiswa ||
-                    !files.Bukti_post_Twibon ||
-                    !files.Bukti_Pembayaran) {
+                if (!files.Kartu_Tanda_Mahasiswa || !files.Bukti_post_Twibon || !files.Bukti_Pembayaran) {
                     return [2 /*return*/, res.status(400).json({ message: "File tidak lengkap" })];
                 }
                 return [4 /*yield*/, (0, fileUpload_1.uploadFile)(files.Kartu_Tanda_Mahasiswa[0].buffer, "Kartu_Tanda_Mahasiswa")];
@@ -91,8 +88,10 @@ var uploadAdministrativeController = function (req, res) { return __awaiter(void
                     Bukti_post_Twibon: buktiPostTwibonUrl,
                     Bukti_Pembayaran: buktiPembayaranUrl,
                 };
+                // Save data to database
                 return [4 /*yield*/, (0, administrativeModel_1.uploadDataAdministrative)(RegistrationID, newDataAdministrative)];
             case 5:
+                // Save data to database
                 _a.sent();
                 return [4 /*yield*/, (0, registerModel_1.changeStatusRegistrasi)(RegistrationID, 2)];
             case 6:
@@ -103,9 +102,9 @@ var uploadAdministrativeController = function (req, res) { return __awaiter(void
                     })];
             case 7:
                 error_1 = _a.sent();
-                console.error(error_1, "\n   backend error broo bagian administative controller");
+                console.error("Error in uploadAdministrativeController:", error_1);
                 res.status(500).json({
-                    message: "backend error broo bagian team administrative",
+                    message: "An error occurred while uploading documents.",
                 });
                 return [3 /*break*/, 8];
             case 8: return [2 /*return*/];
@@ -131,21 +130,21 @@ var checkAdministrativeController = function (req, res) { return __awaiter(void 
                     return [2 /*return*/, res.status(400).json({ message: "Token tidak valid" })];
                 }
                 RegistrationID = decoded.RegistrationID;
-                return [4 /*yield*/, (0, administrativeModel_2.checkAdministrativeByRegistrationID)(RegistrationID)];
+                return [4 /*yield*/, (0, administrativeModel_1.checkAdministrativeByRegistrationID)(RegistrationID)];
             case 1:
                 exists = _a.sent();
                 if (exists === 1) {
-                    res.json({ message: "Data ditemukan", exists: true });
+                    return [2 /*return*/, res.json({ message: "Data ditemukan", exists: true })];
                 }
                 else {
-                    res.json({ message: "Data tidak ditemukan", exists: false });
+                    return [2 /*return*/, res.json({ message: "Data tidak ditemukan", exists: false })];
                 }
                 return [3 /*break*/, 3];
             case 2:
                 error_2 = _a.sent();
-                console.error(error_2, "\n   backend error broo bagian administrative controller");
+                console.error("Error in checkAdministrativeController:", error_2);
                 res.status(500).json({
-                    message: "backend error broo bagian administrative controller",
+                    message: "An error occurred while checking administrative data.",
                 });
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
@@ -154,21 +153,20 @@ var checkAdministrativeController = function (req, res) { return __awaiter(void 
 }); };
 exports.checkAdministrativeController = checkAdministrativeController;
 var getAllAdministrativeController = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var administative, error_3;
+    var administrativeData, error_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
                 return [4 /*yield*/, (0, administrativeModel_1.getAllAdministrative)()];
             case 1:
-                administative = _a.sent();
-                res.json(administative);
-                return [3 /*break*/, 3];
+                administrativeData = _a.sent();
+                return [2 /*return*/, res.json(administrativeData)];
             case 2:
                 error_3 = _a.sent();
-                console.error(error_3, "\n   backend error broo bagian administative controller");
+                console.error("Error in getAllAdministrativeController:", error_3);
                 res.status(500).json({
-                    message: "backend error broo bagian team administative",
+                    message: "An error occurred while retrieving administrative data.",
                 });
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];

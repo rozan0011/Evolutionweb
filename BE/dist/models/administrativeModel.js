@@ -38,6 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createAdministrative = exports.checkAdministrativeByRegistrationID = exports.getAllAdministrative = exports.uploadDataAdministrative = void 0;
 var db_1 = require("../config/db");
+// Function to upload administrative data
 var uploadDataAdministrative = function (RegistrationID, newDataAdministrative) { return __awaiter(void 0, void 0, void 0, function () {
     var Kartu_Tanda_Mahasiswa, Bukti_post_Twibon, Bukti_Pembayaran, dataAdministrative, hasil;
     return __generator(this, function (_a) {
@@ -48,40 +49,33 @@ var uploadDataAdministrative = function (RegistrationID, newDataAdministrative) 
             case 1:
                 dataAdministrative = (_a.sent())[0];
                 if (!(dataAdministrative.length > 0)) return [3 /*break*/, 8];
-                hasil = 0;
-                if (!(Kartu_Tanda_Mahasiswa !== "")) return [3 /*break*/, 3];
+                hasil = 200;
+                if (!Kartu_Tanda_Mahasiswa) return [3 /*break*/, 3];
                 return [4 /*yield*/, db_1.DBconnection.query("UPDATE Administrative SET Kartu_Tanda_Mahasiswa = ? WHERE RegistrationID = ?", [Kartu_Tanda_Mahasiswa, RegistrationID])];
             case 2:
                 _a.sent();
-                hasil = 200;
                 _a.label = 3;
             case 3:
-                if (!(Bukti_post_Twibon !== "")) return [3 /*break*/, 5];
+                if (!Bukti_post_Twibon) return [3 /*break*/, 5];
                 return [4 /*yield*/, db_1.DBconnection.query("UPDATE Administrative SET Bukti_post_Twibon = ? WHERE RegistrationID = ?", [Bukti_post_Twibon, RegistrationID])];
             case 4:
                 _a.sent();
-                hasil = 200;
                 _a.label = 5;
             case 5:
-                if (!(Bukti_Pembayaran !== "")) return [3 /*break*/, 7];
+                if (!Bukti_Pembayaran) return [3 /*break*/, 7];
                 return [4 /*yield*/, db_1.DBconnection.query("UPDATE Administrative SET Bukti_Pembayaran = ? WHERE RegistrationID = ?", [Bukti_Pembayaran, RegistrationID])];
             case 6:
                 _a.sent();
-                hasil = 200;
                 _a.label = 7;
-            case 7: 
-            // await DBconnection.query(
-            //      `UPDATE Register SET Status_Registrasi = 1 WHERE RegistrationID = ?`,
-            //      [RegistrationID]
-            // );
-            return [2 /*return*/, hasil];
+            case 7: return [2 /*return*/, hasil]; // Return success status
             case 8:
                 console.error("Data Administrative tidak ditemukan");
-                return [2 /*return*/, 404];
+                return [2 /*return*/, 404]; // Not found
         }
     });
 }); };
 exports.uploadDataAdministrative = uploadDataAdministrative;
+// Function to get all administrative data
 var getAllAdministrative = function () { return __awaiter(void 0, void 0, void 0, function () {
     var dataAdministrative;
     return __generator(this, function (_a) {
@@ -89,12 +83,12 @@ var getAllAdministrative = function () { return __awaiter(void 0, void 0, void 0
             case 0: return [4 /*yield*/, db_1.DBconnection.query("SELECT * FROM Administrative")];
             case 1:
                 dataAdministrative = (_a.sent())[0];
-                return [2 /*return*/, dataAdministrative];
+                return [2 /*return*/, dataAdministrative]; // Cast to Administrative[]
         }
     });
 }); };
 exports.getAllAdministrative = getAllAdministrative;
-// fungsi yang ajan mereturn 1 atau 0 yang amengecek apakah ada data di table Administrative yang memiliki RegisterID sesuai parameter
+// Function to check if administrative data exists for a given RegistrationID
 var checkAdministrativeByRegistrationID = function (RegistrationID) { return __awaiter(void 0, void 0, void 0, function () {
     var dataAdministrative;
     return __generator(this, function (_a) {
@@ -102,20 +96,22 @@ var checkAdministrativeByRegistrationID = function (RegistrationID) { return __a
             case 0: return [4 /*yield*/, db_1.DBconnection.query("SELECT * FROM Administrative WHERE RegistrationID = ?", [RegistrationID])];
             case 1:
                 dataAdministrative = (_a.sent())[0];
-                if (dataAdministrative[0].Kartu_Tanda_Mahasiswa !== "" &&
-                    dataAdministrative[0].Bukti_post_Twibon !== "" &&
-                    dataAdministrative[0].Bukti_Pembayaran !== "") {
-                    return [2 /*return*/, 1];
+                // Check if data exists and all fields are filled
+                if (dataAdministrative.length > 0 &&
+                    dataAdministrative[0].Kartu_Tanda_Mahasiswa &&
+                    dataAdministrative[0].Bukti_post_Twibon &&
+                    dataAdministrative[0].Bukti_Pembayaran) {
+                    return [2 /*return*/, 1]; // All fields are filled
                 }
                 else {
-                    return [2 /*return*/, 0];
+                    return [2 /*return*/, 0]; // Not all fields are filled or no data found
                 }
                 return [2 /*return*/];
         }
     });
 }); };
 exports.checkAdministrativeByRegistrationID = checkAdministrativeByRegistrationID;
-// fungsi yang akan menginsert data ke table Administrative dengan parameter RegistrationID saja
+// Function to create administrative data for a given RegistrationID
 var createAdministrative = function (RegistrationID) { return __awaiter(void 0, void 0, void 0, function () {
     var result, error_1;
     return __generator(this, function (_a) {
@@ -126,16 +122,16 @@ var createAdministrative = function (RegistrationID) { return __awaiter(void 0, 
             case 1:
                 result = (_a.sent())[0];
                 if (result.affectedRows > 0) {
-                    return [2 /*return*/, 1];
+                    return [2 /*return*/, 1]; // Successfully inserted
                 }
                 else {
-                    return [2 /*return*/, 0];
+                    return [2 /*return*/, 0]; // Insertion failed
                 }
                 return [3 /*break*/, 3];
             case 2:
                 error_1 = _a.sent();
                 console.error("Error inserting data into Administrative:", error_1);
-                return [2 /*return*/, 0];
+                return [2 /*return*/, 0]; // Insertion failed
             case 3: return [2 /*return*/];
         }
     });
