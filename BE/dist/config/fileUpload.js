@@ -4,13 +4,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.uploadFile = void 0;
-var cloudinary_1 = __importDefault(require("./cloudinary"));
-var streamifier_1 = __importDefault(require("streamifier"));
-var uploadFile = function (buffer, folder) {
-    return new Promise(function (resolve, reject) {
-        var uploadStream = cloudinary_1.default.uploader.upload_stream({
+const cloudinary_1 = __importDefault(require("./cloudinary"));
+const streamifier_1 = __importDefault(require("streamifier"));
+const uploadFile = (buffer, folder) => {
+    return new Promise((resolve, reject) => {
+        const uploadStream = cloudinary_1.default.uploader.upload_stream({
             folder: folder
-        }, function (error, result) {
+        }, (error, result) => {
             if (result) {
                 resolve(result.secure_url);
             }

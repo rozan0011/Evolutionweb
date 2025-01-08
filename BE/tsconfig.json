@@ -1,17 +1,16 @@
 {
   "compilerOptions": {
     "target": "ES6",
-    "module": "CommonJS",
-    "lib": [ "ESNext", "DOM" ],
+    "module": "commonjs",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
     "baseUrl": "./src",
-    "rootDir": "./",
-    "moduleResolution": "node"
+    "paths": {
+      "*": [ "node_modules/*", "src/types/*" ]
+    }
   },
-  "include": [ "src/**/*", "api/**/*" ], 
-  "exclude": [ "node_modules" ]
+  "include": [ "src/**/*" ]
 }

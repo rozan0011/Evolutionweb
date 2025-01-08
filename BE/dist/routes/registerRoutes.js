@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var express_1 = require("express");
-var registerController_1 = require("../controllers/registerController");
-var router = (0, express_1.Router)();
+const express_1 = require("express");
+const registerController_1 = require("../controllers/registerController");
+const router = (0, express_1.Router)();
 router.get("/", registerController_1.getAllRegisterController);
 router.get("/single", registerController_1.getSingleRegisterController); // http://localhost:3987/api/register/:id
 router.put("/:id", registerController_1.updateRegisterController);

@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var express_1 = require("express");
-var teamController_1 = require("../controllers/teamController");
-var router = (0, express_1.Router)();
+const express_1 = require("express");
+const teamController_1 = require("../controllers/teamController");
+const router = (0, express_1.Router)();
 router.get("/", teamController_1.getAllTeamsController);
 router.get("/getByID", teamController_1.getTeamByIDController); // http://localhost:3987/api/team/getByID
 router.put("/add/member", teamController_1.addMemberTeamController); // http://localhost:3987/api/team/add/member
